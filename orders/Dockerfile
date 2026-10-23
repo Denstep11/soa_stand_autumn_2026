@@ -1,11 +1,12 @@
-FROM golang:1.26-alpine AS build
-WORKDIR /src
-COPY go.mod go.sum ./
-RUN go mod download
-COPY *.go ./
-RUN CGO_ENABLED=0 go build -trimpath -o /out/orders .
-
-FROM gcr.io/distroless/static-debian12:nonroot
-COPY --from=build /out/orders /orders
+FROM maven:3.9.9-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn -B dependency:go-offline
+COPY src src
+RUN mvn -B package -DskipTests
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/orders-1.0.0.jar app.jar
+USER 10001
 EXPOSE 8080
-ENTRYPOINT ["/orders"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,0 +1,14 @@
+server:
+  port: ${PORT:8080}
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    deserialization:
+      accept-float-as-int: false
+  threads:
+    virtual:
+      enabled: true
+orders:
+  payment-url: ${PAYMENT_URL:http://localhost:8090}
+  inventory-url: ${INVENTORY_URL:http://localhost:8090}
+  events-url: ${EVENTS_URL:http://localhost:8090}
